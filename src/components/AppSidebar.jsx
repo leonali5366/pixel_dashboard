@@ -54,10 +54,12 @@ export default function AppSidebar() {
         <SidebarMenu className="space-y-2">
           <SidebarMenuItem>
             <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-              <Link to='/'><div className="w-full inline-flex items-center gap-x-3">
-                <PanelsTopLeft size={24} strokeWidth={1.5} />
-                Overview
-              </div></Link>
+              <Link to="/">
+                <div className="w-full inline-flex items-center gap-x-3">
+                  <PanelsTopLeft size={24} strokeWidth={1.5} />
+                  Overview
+                </div>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           {/* orders */}
@@ -75,7 +77,7 @@ export default function AppSidebar() {
               <CollapsibleContent>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <Link to='/webdevelopment'>
+                    <Link to="/webdevelopment">
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                         <div className="size-2 rounded-full bg-blue-500"></div>
                         Web Development
@@ -122,36 +124,6 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
-          {/* packages */}
-          <Collapsible className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-                  <div className="w-full inline-flex items-center gap-x-3">
-                    <Box size={24} strokeWidth={1.5} />
-                    Packages
-                  </div>
-                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      Package List
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Add New Packages
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
           {/* users */}
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
@@ -182,45 +154,6 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
-          {/* staff */}
-          <Collapsible className="group/collapsible">
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-                  <div className="w-full inline-flex items-center gap-x-3">
-                    <Users size={24} strokeWidth={1.5} />
-                    Staffs
-                  </div>
-                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      All Stuff
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Add New Stuff
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
-            </SidebarMenuItem>
-          </Collapsible>
-          {/* chat */}
-          <SidebarMenuItem>
-            <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-              <div className="w-full inline-flex items-center gap-x-3">
-                <MessageCircle size={24} strokeWidth={1.5} />
-                Chat
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
           {/* support */}
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
