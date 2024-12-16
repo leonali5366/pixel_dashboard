@@ -19,10 +19,7 @@ const App = () => {
         <div className="w-full flex flex-col h-full relative">
           <div className="inline-flex min-h-[4rem] w-full items-center px-5 sticky top-0 bg-white z-[999]">
             <SidebarTrigger />
-            <div className="ml-3 pl-3 border-l">
-              <BreadcrumbM />
-            </div>
-            {/* <Header /> */}
+            <Header />
           </div>
           <div className="w-full bg-[#F5F6FA] h-full">
             <Routes>
