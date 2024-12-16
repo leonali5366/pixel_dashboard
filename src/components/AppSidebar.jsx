@@ -42,6 +42,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { Link } from "react-router-dom";
 
 export default function AppSidebar() {
   return (
@@ -53,10 +54,10 @@ export default function AppSidebar() {
         <SidebarMenu className="space-y-2">
           <SidebarMenuItem>
             <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-              <div className="w-full inline-flex items-center gap-x-3">
+              <Link to='/'><div className="w-full inline-flex items-center gap-x-3">
                 <PanelsTopLeft size={24} strokeWidth={1.5} />
                 Overview
-              </div>
+              </div></Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           {/* orders */}
@@ -74,10 +75,12 @@ export default function AppSidebar() {
               <CollapsibleContent>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      Web Development
-                    </SidebarMenuSubButton>
+                    <Link to='/webdevelopment'>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Web Development
+                      </SidebarMenuSubButton>
+                    </Link>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">

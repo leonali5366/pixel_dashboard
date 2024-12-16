@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
 import AppSidebar from "./components/AppSidebar";
 import Header from "./components/Header/Header";
 import { BreadcrumbM } from "./components/Header/Breadcrumb";
+import WebDevelopment from "./pages/WebDevelopment";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <div className="w-full bg-[#F5F6FA] h-full">
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/webdevelopment" element={<WebDevelopment />} />
             </Routes>
           </div>
         </div>
