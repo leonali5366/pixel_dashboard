@@ -8,6 +8,8 @@ import Development from "../Orders/Development/Development"
 import Seo from "../Orders/Seo/Seo"
 import Ppc from "../Orders/Ppc/Ppc"
 import Hosting from "../Orders/Hosting/Hosting"
+import CustomOrder from "../Orders/CustomOrder/CustomOrder"
+import ClientOrders from "../Orders/ClientOrders/ClientOrders"
 
 const routes = createBrowserRouter([
     {
@@ -19,6 +21,8 @@ const routes = createBrowserRouter([
             { path: "/seo", element: <Seo /> },
             { path: "/ppc", element: <Ppc /> },
             { path: "/hosting", element: <Hosting /> },
+            { path: "/order/custom", element: <CustomOrder /> },
+            { path: "/order/client/myOrder", element: <ClientOrders /> },
         ]
     },
     {
