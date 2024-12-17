@@ -42,8 +42,20 @@ import {
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
+import { useContext } from "react";
+import { AuthContext } from "@/Context/UserContext";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function AppSidebar() {
+  const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("pxileClient");
+    localStorage.removeItem("pxileToken");
+    setUser(null);
+    navigate("/auth/login");
+  };
   return (
     <Sidebar>
       <SidebarHeader className="border-b h-[4rem] px-5 flex justify-center">
@@ -59,7 +71,9 @@ export default function AppSidebar() {
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
           {/* orders */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -74,52 +88,44 @@ export default function AppSidebar() {
               <CollapsibleContent>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      Web Development
-                    </SidebarMenuSubButton>
+                    <Link to={"/development"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Development
+                      </SidebarMenuSubButton>
+                    </Link>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Wordpress Development
-                    </SidebarMenuSubButton>
+                    <Link to={'/seo'}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-pink-500"></div>
+                        SEO
+                      </SidebarMenuSubButton>
+                    </Link>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-green-500"></div>
-                      Wix
-                    </SidebarMenuSubButton>
+                    <Link to={'/ppc'}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-orange-500"></div>
+                        PPC
+                      </SidebarMenuSubButton>
+                    </Link>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-yellow-500"></div>
-                      Shopify
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-pink-500"></div>
-                      SEO
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-orange-500"></div>
-                      PPC
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-purple-500"></div>
-                      Hosting
-                    </SidebarMenuSubButton>
+                    <Link to={'/hosting'}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-purple-500"></div>
+                        Hosting
+                      </SidebarMenuSubButton>
+                    </Link>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* packages */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -149,7 +155,9 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* users */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -179,7 +187,9 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* staff */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -209,7 +219,9 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* chat */}
+
           <SidebarMenuItem>
             <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
               <div className="w-full inline-flex items-center gap-x-3">
@@ -218,7 +230,9 @@ export default function AppSidebar() {
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
           {/* support */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -248,7 +262,9 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* settings */}
+
           <SidebarMenuItem>
             <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
               <div className="w-full inline-flex items-center gap-x-3">
@@ -266,12 +282,20 @@ export default function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton className="h-auto">
                   <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarImage
+                      src={
+                        user?.photo
+                          ? user?.photo
+                          : "https://github.com/shadcn.png"
+                      }
+                    />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="text-base font-semibold">Shuvo</span>
-                    <span>m@example.com</span>
+                    <span className="text-base font-semibold">
+                      {user?.name}
+                    </span>
+                    <span>{user?.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto" />
                 </SidebarMenuButton>
@@ -286,8 +310,10 @@ export default function AppSidebar() {
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="text-base font-semibold">Shuvo</span>
-                    <span className="font-normal">m@example.com</span>
+                    <span className="text-base font-semibold">
+                      {user?.name}
+                    </span>
+                    <span className="font-normal">{user?.email}</span>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -312,7 +338,12 @@ export default function AppSidebar() {
                   </Badge>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    handleLogout();
+                  }}
+                  className="cursor-pointer"
+                >
                   <LogOut />
                   Log Out
                 </DropdownMenuItem>
