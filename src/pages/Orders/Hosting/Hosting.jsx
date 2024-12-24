@@ -1,23 +1,63 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
 const Hosting = () => {
-  // Dummy data for demonstration
-  const stats = {
-    totalOrders: 320,
-    ongoingOrders: 75,
-    completedOrders: 220,
-    canceledOrders: 25,
-    revenue: 120000, // in USD
-    ongoingRevenue: 20000,
-  };
+  const [orders, setOrders] = useState([]);
+  console.log(orders)
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    ongoingOrders: 0,
+    completedOrders: 0,
+    canceledOrders: 0,
+    revenue: 0,
+    ongoingRevenue: 0,
+  });
 
-  const orders = [
-    { id: 1, client: "John Doe", service: "Shared Hosting", status: "Ongoing", amount: 100 },
-    { id: 2, client: "Emily Carter", service: "VPS Hosting", status: "Completed", amount: 800 },
-    { id: 3, client: "Mike Brown", service: "Cloud Hosting", status: "Canceled", amount: 0 },
-    { id: 4, client: "Sophia Green", service: "Dedicated Hosting", status: "Completed", amount: 1500 },
-    // More dummy orders...
-  ];
+  // Fetch Orders by Service
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/v1/order/get/orderByService?service=hosting`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.status === "success") {
+          setOrders(data.data);
+          calculateStats(data.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching orders:", error));
+  }, []);
+
+  // Calculate statistics dynamically
+  const calculateStats = (ordersData) => {
+    const totalOrders = ordersData.length;
+
+    const ongoingOrders = ordersData.filter(
+      (order) => order.status === "in progress"
+    ).length;
+
+    const completedOrders = ordersData.filter(
+      (order) => order.status === "Completed"
+    ).length;
+
+    const canceledOrders = ordersData.filter(
+      (order) => order.status === "Canceled"
+    ).length;
+
+    const revenue = ordersData
+      .filter((order) => order.status === "Completed")
+      .reduce((sum, order) => sum + order.moneyPaid, 0);
+
+    const ongoingRevenue = ordersData
+      .filter((order) => order.status === "in progress")
+      .reduce((sum, order) => sum + order.moneyDue, 0);
+
+    setStats({
+      totalOrders,
+      ongoingOrders,
+      completedOrders,
+      canceledOrders,
+      revenue,
+      ongoingRevenue,
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -31,11 +71,15 @@ const Hosting = () => {
           <p className="text-3xl font-bold">{stats.totalOrders}</p>
         </div>
         <div className="bg-green-100 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-green-800">Ongoing Orders</h2>
+          <h2 className="text-lg font-semibold text-green-800">
+            Ongoing Orders
+          </h2>
           <p className="text-3xl font-bold">{stats.ongoingOrders}</p>
         </div>
         <div className="bg-red-100 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-red-800">Canceled Orders</h2>
+          <h2 className="text-lg font-semibold text-red-800">
+            Canceled Orders
+          </h2>
           <p className="text-3xl font-bold">{stats.canceledOrders}</p>
         </div>
         <div className="bg-yellow-100 p-4 rounded-lg shadow">
@@ -43,14 +87,18 @@ const Hosting = () => {
           <p className="text-3xl font-bold">${stats.revenue}</p>
         </div>
         <div className="bg-purple-100 p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-purple-800">Ongoing Revenue</h2>
+          <h2 className="text-lg font-semibold text-purple-800">
+            Ongoing Revenue
+          </h2>
           <p className="text-3xl font-bold">${stats.ongoingRevenue}</p>
         </div>
       </div>
 
       {/* Orders Table */}
       <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Order Details</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+          Order Details
+        </h2>
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -63,22 +111,24 @@ const Hosting = () => {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 p-2">{order.id}</td>
-                <td className="border border-gray-300 p-2">{order.client}</td>
+              <tr key={order._id} className="hover:bg-gray-50">
+                <td className="border border-gray-300 p-2">{order._id}</td>
+                <td className="border border-gray-300 p-2">{order.email}</td>
                 <td className="border border-gray-300 p-2">{order.service}</td>
                 <td
                   className={`border border-gray-300 p-2 ${
-                    order.status === "Ongoing"
+                    order.status.toLowerCase() === "in progress"
                       ? "text-yellow-600"
-                      : order.status === "Completed"
+                      : order.status.toLowerCase() === "completed"
                       ? "text-green-600"
                       : "text-red-600"
                   }`}
                 >
                   {order.status}
                 </td>
-                <td className="border border-gray-300 p-2">${order.amount}</td>
+                <td className="border border-gray-300 p-2">
+                  ${order.moneyPaid || order.moneyDue}
+                </td>
               </tr>
             ))}
           </tbody>

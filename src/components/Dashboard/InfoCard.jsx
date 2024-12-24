@@ -4,6 +4,8 @@ import { RiDiscountPercentFill } from "react-icons/ri";
 import { FaSackDollar } from "react-icons/fa6";
 import { Area, AreaChart } from "recharts";
 import { ChartContainer } from "../ui/chart";
+import { useEffect, useState } from "react";
+
 const data = [
   {
     uv: 35,
@@ -33,37 +35,78 @@ const data = [
     uv: 40,
   },
 ];
+
 const chartConfig = {
   newUser: {
-    label: "NewUser",
+    label: "Total User",
     color: "hsl(219, 100%, 64%)",
   },
   activeOrders: {
-    label: "ActiveOrders",
+    label: "Active Orders",
     color: "hsl(138, 56%, 50%)",
   },
   totalSales: {
-    label: "TotalSales",
+    label: "Total Ongoing Sales",
     color: "hsl(31, 90%, 54%)",
   },
   totalProfit: {
-    label: "TotalProfit",
+    label: "Total Profit",
     color: "hsl(47, 95%, 54%)",
   },
 };
 
 export default function InfoCard() {
+  const [users, setUsers] = useState([]);
+  const [activeOrders, setActiveOrders] = useState([]);
+  const [totalSales, setTotalSales] = useState(0); // Sales amount
+  const [totalProfit, setTotalProfit] = useState(0); // Profit amount
+
+  // Fetch users
+  useEffect(() => {
+    fetch("http://localhost:5000/api/v1/client/all")
+      .then((response) => response.json())
+      .then((data) => {
+        setUsers(data.clients || []);
+      });
+  }, []); // Empty dependency array, so it runs only once.
+
+  // Fetch Active Orders and calculate ongoing sales and profit
+  useEffect(() => {
+    fetch("http://localhost:5000/api/v1/order/get/all")
+      .then((response) => response.json())
+      .then((data) => {
+        const orders = data.data || [];
+        setActiveOrders(orders);
+
+        // Calculate Total Ongoing Sales (not finished orders)
+        const ongoingSales = orders
+          .filter((order) => order.status !== "finished")
+          .reduce((acc, order) => acc + (order.budget || 0), 0); // Sum of budget for ongoing orders
+        setTotalSales(ongoingSales);
+
+        // Calculate Total Profit (finished orders)
+        const completedOrders = orders
+          .filter((order) => order.status === "finished")
+          .reduce((acc, order) => acc + (order.budget || 0), 0); // Sum of budget for finished orders
+        setTotalProfit(completedOrders);
+      })
+      .catch((error) => {
+        console.error("Error fetching orders:", error);
+      });
+  }, []); // Runs only once when the component is mounted.
+
   return (
     <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5 w-full h-fit">
-      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-blue-50 flex flex-col gap-y-4">
+      {/* Total Users */}
+      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-blue-50 flex flex-col gap-y-4 h-[100px]">
         <div className="inline-flex gap-x-5 justify-between">
           <div className="inline-flex items-center gap-x-2">
             <div className="size-12 rounded-full bg-[#487FFF] flex items-center justify-center text-white">
               <FaUserCheck size={24} className="ml-2" />
             </div>
             <div className="flex flex-col gap-y-1">
-              <p className="text-sm font-medium text-[#4B5563]">New Users</p>
-              <h6 className="text-2xl font-semibold">15,000</h6>
+              <p className="text-sm font-medium text-[#4B5563]">Total Users</p>
+              <h6 className="text-2xl font-semibold">{users?.length}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
@@ -96,15 +139,10 @@ export default function InfoCard() {
             </ChartContainer>
           </div>
         </div>
-        <p className="text-sm">
-          Increase by{" "}
-          <span className="bg-green-200 bg-opacity-40 text-[#45B369] font-medium p-1 rounded-md">
-            +200
-          </span>{" "}
-          this week
-        </p>
       </div>
-      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-green-50 flex flex-col gap-y-4">
+
+      {/* Active Orders */}
+      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-green-50 flex flex-col gap-y-4 h-[100px]">
         <div className="inline-flex gap-x-5 justify-between">
           <div className="inline-flex items-center gap-x-2">
             <div className="size-12 rounded-full bg-[#45B369] flex items-center justify-center text-white">
@@ -114,7 +152,7 @@ export default function InfoCard() {
               <p className="text-sm font-medium text-[#4B5563]">
                 Active Orders
               </p>
-              <h6 className="text-2xl font-semibold">8,000</h6>
+              <h6 className="text-2xl font-semibold">{activeOrders.length}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
@@ -153,30 +191,33 @@ export default function InfoCard() {
             </ChartContainer>
           </div>
         </div>
-        <p className="text-sm">
-          Increase by{" "}
-          <span className="bg-green-200 bg-opacity-40 text-[#45B369] font-medium p-1 rounded-md">
-            +200
-          </span>{" "}
-          this week
-        </p>
       </div>
-      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-orange-50 flex flex-col gap-y-4">
+
+      {/* Total Ongoing Sales */}
+      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-orange-50 flex flex-col gap-y-4 h-[100px]">
         <div className="inline-flex gap-x-5 justify-between">
           <div className="inline-flex items-center gap-x-2">
             <div className="size-12 rounded-full bg-[#F4941E] flex items-center justify-center text-white">
               <RiDiscountPercentFill size={24} />
             </div>
             <div className="flex flex-col gap-y-1">
-              <p className="text-sm font-medium text-[#4B5563]">Total Sales</p>
-              <h6 className="text-2xl font-semibold">$5,00,000</h6>
+              <p className="text-sm font-medium text-[#4B5563]">
+                Ongoing Sales
+              </p>
+              <h6 className="text-2xl font-semibold">${totalSales}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
             <ChartContainer config={chartConfig} className="w-[7rem] h-[8rem]">
               <AreaChart accessibilityLayer data={data}>
                 <defs>
-                  <linearGradient id="fillTotalSales" x1="0" y1="" x2="0" y2=".6">
+                  <linearGradient
+                    id="fillTotalSales"
+                    x1="0"
+                    y1=""
+                    x2="0"
+                    y2=".6"
+                  >
                     <stop
                       offset="5%"
                       stopColor="var(--color-totalSales)"
@@ -202,15 +243,10 @@ export default function InfoCard() {
             </ChartContainer>
           </div>
         </div>
-        <p className="text-sm">
-          Decrease by{" "}
-          <span className="bg-[#FDE1E2] text-[#EF4A00] font-medium p-1 rounded-md">
-            -$10k
-          </span>{" "}
-          this week
-        </p>
       </div>
-      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-yellow-50 flex flex-col gap-y-4">
+
+      {/* Total Profit */}
+      <div className="border border-slate-300 p-4 rounded-md bg-gradient-to-r from-white to-yellow-50 flex flex-col gap-y-4 h-[100px]">
         <div className="inline-flex gap-x-5 justify-between">
           <div className="inline-flex items-center gap-x-2">
             <div className="size-12 rounded-full bg-yellow-400 flex items-center justify-center text-white">
@@ -218,14 +254,20 @@ export default function InfoCard() {
             </div>
             <div className="flex flex-col gap-y-1">
               <p className="text-sm font-medium text-[#4B5563]">Total Profit</p>
-              <h6 className="text-2xl font-semibold">$3,00,700</h6>
+              <h6 className="text-2xl font-semibold">${totalProfit}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
             <ChartContainer config={chartConfig} className="w-[7rem] h-[8rem]">
               <AreaChart accessibilityLayer data={data}>
                 <defs>
-                  <linearGradient id="fillTotalProfit" x1="0" y1="" x2="0" y2=".6">
+                  <linearGradient
+                    id="fillTotalProfit"
+                    x1="0"
+                    y1=""
+                    x2="0"
+                    y2=".6"
+                  >
                     <stop
                       offset="5%"
                       stopColor="var(--color-totalProfit)"
@@ -251,13 +293,6 @@ export default function InfoCard() {
             </ChartContainer>
           </div>
         </div>
-        <p className="text-sm">
-          Increase by{" "}
-          <span className="bg-green-200 bg-opacity-40 text-[#45B369] font-medium p-1 rounded-md">
-            +$15k
-          </span>{" "}
-          this week
-        </p>
       </div>
     </div>
   );

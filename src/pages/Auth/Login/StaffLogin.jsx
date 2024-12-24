@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
 import { AuthContext } from "@/Context/UserContext";
-const Login = () => {
+
+const StaffLogin = () => {
   const { user, setUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,7 +30,7 @@ const Login = () => {
     setError("");
     setLoading(true);
 
-    fetch(`http://localhost:5000/api/v1/client/login`, {
+    fetch(`http://localhost:5000/api/v1/staff/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,9 +41,9 @@ const Login = () => {
       .then((data) => {
         if (data.status === "success") {
           toast.success("Login successful");
-          setUser(data.clientData); // Update user state
+          setUser(data.staffData); // Update user state
           localStorage.setItem("pxileToken", data.token);
-          localStorage.setItem("pxileClient", JSON.stringify(data.clientData));
+          localStorage.setItem("pxileClient", JSON.stringify(data.staffData));
           navigate("/"); // Redirect after login
         } else {
           setError(data.message);
@@ -54,12 +55,11 @@ const Login = () => {
       })
       .finally(() => setLoading(false));
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen my-auto">
       <Card className="w-[450px]">
         <CardHeader>
-          <CardTitle>Client Login</CardTitle>
+          <CardTitle>Staff Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -97,22 +97,13 @@ const Login = () => {
               >
                 {loading && <ClipLoader size={20} color="white" />} Login
               </Button>
-              <div className="flex items-center gap-2 mt-5">
-                {`Don't have an account?`}
-                <Link to="/auth/signup" className="hover:underline">
-                  Signup
-                </Link>
-              </div>
-              <hr />
-              or
-              <hr />
-              <div className="flex items-center gap-2 mt-3">
-                {`Are you A Staff?`}
-                <Link to="/auth/login/staff" className="hover:underline">
-                  Staff Login
-                </Link>
-              </div>
             </CardFooter>
+            <div className="flex items-center justify-center gap-2 mt-3">
+              {`Are you A Client?`}
+              <Link to="/" className="hover:underline">
+                Client Login
+              </Link>
+            </div>
           </form>
         </CardContent>
       </Card>
@@ -120,4 +111,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default StaffLogin;

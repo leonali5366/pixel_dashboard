@@ -11,6 +11,7 @@ const UserContext = ({ children }) => {
   );
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("pxileToken");
+  const [refresh, setRefresh] = useState(1);
 
   useEffect(() => {
     if (!user && token) {
@@ -25,8 +26,9 @@ const UserContext = ({ children }) => {
         .then((data) => {
           if (data.status === "success") {
             setUser(data.client);
+            localStorage.removeItem("pxileClient");
             localStorage.setItem("pxileClient", JSON.stringify(data.client));
-            window.location.reload(); // This is unnecessary unless required for your app
+            window.location.reload();
           }
         })
         .catch((error) => console.error("Error fetching user:", error))
@@ -34,7 +36,29 @@ const UserContext = ({ children }) => {
     }
   }, [user, token]);
 
-  const value = { user, setUser };
+  useEffect(() => {
+    if (refresh > 1) {
+      setLoading(true);
+      fetch(`http://localhost:5000/api/v1/client/single`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success") {
+            setUser(data.client);
+            localStorage.removeItem("pxileClient");
+            localStorage.setItem("pxileClient", JSON.stringify(data.client));
+          }
+        })
+        .catch((error) => console.error("Error fetching user:", error))
+        .finally(() => setLoading(false));
+    }
+  }, [refresh]);
+
+  const value = { user, setUser, refresh, setRefresh };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
