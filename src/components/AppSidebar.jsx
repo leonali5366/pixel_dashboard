@@ -19,18 +19,15 @@ import {
 import {
   BadgeCheck,
   Bell,
-  Box,
   ChevronDown,
   ChevronsUpDown,
   Headset,
   LogOut,
-  MessageCircle,
   PanelsTopLeft,
   PanelTop,
   Settings,
   ShoppingCart,
   Sparkles,
-  Users,
 } from "lucide-react";
 import {
   DropdownMenu,
