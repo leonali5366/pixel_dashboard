@@ -1,22 +1,62 @@
-import React from "react";
+import  { useEffect, useState } from "react";
 
 const Seo = () => {
-  // Dummy data for demonstration
-  const stats = {
-    totalOrders: 85,
-    ongoingOrders: 20,
-    completedOrders: 60,
-    canceledOrders: 5,
-    revenue: 25000, // in USD
-    ongoingRevenue: 7000,
-  };
+  const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState({
+    totalOrders: 0,
+    ongoingOrders: 0,
+    completedOrders: 0,
+    canceledOrders: 0,
+    revenue: 0,
+    ongoingRevenue: 0,
+  });
 
-  const orders = [
-    { id: 1, client: "Alice Johnson", service: "SEO Audit", status: "Ongoing", amount: 300 },
-    { id: 2, client: "Bob Williams", service: "Content Optimization", status: "Completed", amount: 600 },
-    { id: 3, client: "Catherine Bell", service: "Link Building", status: "Canceled", amount: 0 },
-    // Add more dummy data
-  ];
+  // Fetch Orders by Service
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/v1/order/get/orderByService?service=seo`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.status === "success" && data?.data?.length > 0) {
+          setOrders(data.data);
+          calculateStats(data.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching orders:", error));
+  }, []);
+
+  // Calculate statistics dynamically
+  const calculateStats = (ordersData) => {
+    const totalOrders = ordersData.length;
+
+    const ongoingOrders = ordersData.filter(
+      (order) => order.status.toLowerCase() === "in progress"
+    ).length;
+
+    const completedOrders = ordersData.filter(
+      (order) => order.status.toLowerCase() === "completed"
+    ).length;
+
+    const canceledOrders = ordersData.filter(
+      (order) => order.status.toLowerCase() === "canceled"
+    ).length;
+
+    const revenue = ordersData
+      .filter((order) => order.status.toLowerCase() === "completed")
+      .reduce((sum, order) => sum + order.moneyPaid, 0);
+
+    const ongoingRevenue = ordersData
+      .filter((order) => order.status.toLowerCase() === "in progress")
+      .reduce((sum, order) => sum + order.moneyDue, 0);
+
+    setStats({
+      totalOrders,
+      ongoingOrders,
+      completedOrders,
+      canceledOrders,
+      revenue,
+      ongoingRevenue,
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -61,25 +101,38 @@ const Seo = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 p-2">{order.id}</td>
-                <td className="border border-gray-300 p-2">{order.client}</td>
-                <td className="border border-gray-300 p-2">{order.service}</td>
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <tr key={order._id} className="hover:bg-gray-50">
+                  <td className="border border-gray-300 p-2">{order._id}</td>
+                  <td className="border border-gray-300 p-2">{order.email}</td>
+                  <td className="border border-gray-300 p-2">{order.service}</td>
+                  <td
+                    className={`border border-gray-300 p-2 ${
+                      order.status.toLowerCase() === "in progress"
+                        ? "text-yellow-600"
+                        : order.status.toLowerCase() === "completed"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {order.status}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    ${order.moneyPaid || order.moneyDue}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
                 <td
-                  className={`border border-gray-300 p-2 ${
-                    order.status === "Ongoing"
-                      ? "text-yellow-600"
-                      : order.status === "Completed"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
+                  colSpan="5"
+                  className="text-center border border-gray-300 p-4 text-gray-500"
                 >
-                  {order.status}
+                  No orders found.
                 </td>
-                <td className="border border-gray-300 p-2">${order.amount}</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

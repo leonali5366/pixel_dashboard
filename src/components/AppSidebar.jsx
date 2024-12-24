@@ -25,6 +25,7 @@ import {
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "@/Context/UserContext";
+import { UserPlus } from "lucide-react";
 
 export default function AppSidebar() {
   const { user } = useContext(AuthContext);
@@ -126,13 +127,49 @@ export default function AppSidebar() {
             </SidebarMenuItem>
           </Collapsible>
 
-          {/* packages */}
+          {/* Staff */}
 
           <Collapsible
             className={`${
-              user?.role === "admin" ? " group/collapsible" : "hidden"
+              user?.role === "admin" ? "group/collapsible" : "hidden"
             }`}
           >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
+                  <div className="w-full inline-flex items-center gap-x-3">
+                    <UserPlus size={24} strokeWidth={1.5} />
+                    Staff
+                  </div>
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <Link to={"/staff/all"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-green-500"></div>
+                        Staff List
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+                  <Link to={"/staff/add"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Add New Staff
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+
+          {/* packages */}
+
+          <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
@@ -145,18 +182,27 @@ export default function AppSidebar() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      Package List
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Add New Packages
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                  <Link to={'/package/all'}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-green-500"></div>
+                        Packages
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+
+                  
+
+                 
+
+                  <Link className={`${user?.role === 'admin' ? "" : "hidden"}`} to={'/package/create'}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Add New Packages
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
@@ -174,36 +220,44 @@ export default function AppSidebar() {
                 <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
                   <div className="w-full inline-flex items-center gap-x-3">
                     <PiUsersThree size={24} strokeWidth={1.5} />
-                    Users
+                    Clients
                   </div>
                   <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-blue-500"></div>
-                      All User
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Add New User
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                  <Link to={"/client/all"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        All Clients
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+                  <Link to={"/client/add"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Add New Client
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
 
-          {/* support */}
+          {/* support for admin*/}
 
-          <Collapsible className="group/collapsible">
+          <Collapsible
+            className={`${
+              user?.role === "admin" ? " group/collapsible" : "hidden"
+            }`}
+          >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
+                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium cursor-pointer">
                   <div className="w-full inline-flex items-center gap-x-3">
                     <Headset size={24} strokeWidth={1.5} />
                     Support
@@ -213,21 +267,49 @@ export default function AppSidebar() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-green-500"></div>
-                      Solved
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-red-500"></div>
-                      Active Issues
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
+                  <Link to={"/ticket/solved"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-green-500"></div>
+                        Solved
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+                  <Link to={"/ticket/all"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Active Issues
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+                  <Link to={"/ticket/create"}>
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Open A Ticket
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
+          </Collapsible>
+
+          {/* support for users */}
+          <Collapsible className={`${user?.role === "client" ? "" : "hidden"}`}>
+            <Link to={"/ticket/create/"}>
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium cursor-pointer">
+                    <div className="w-full inline-flex items-center gap-x-3">
+                      <Headset size={24} strokeWidth={1.5} />
+                      Support
+                    </div>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              </SidebarMenuItem>
+            </Link>
           </Collapsible>
         </SidebarMenu>
       </SidebarContent>

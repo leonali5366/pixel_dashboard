@@ -10,7 +10,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useContext } from "react";
 import { AuthContext } from "@/Context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -149,16 +149,49 @@ const Header = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[24rem] z-[1000] mr-10">
             <DropdownMenuLabel>
-              <div className="inline-flex items-center justify-between w-full">
+              <div className="inline-flex items-center justify-between w-full px-5">
                 <span className="text-xl">{user?.name}</span>
-                <span className="font-medium">{user?.role}</span>
+                <span className="font-medium text-[17px]">{user?.role}</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User />
-              Profile
-            </DropdownMenuItem>
+
+            {/* Go to profile */}
+            {/* Here you go to your profile based on your role */}
+            {/* For Admin */}
+            <Link
+              className={user?.role === "admin" ? "" : "hidden"}
+              to={"/profile/admin"}
+            >
+              <DropdownMenuItem>
+                <User />
+                Profile
+              </DropdownMenuItem>
+            </Link>
+
+            {/* For Staff */}
+            <Link
+              className={user?.role === "staff" ? "" : "hidden"}
+              to={"/profile/staff"}
+            >
+              <DropdownMenuItem>
+                <User />
+                Profile
+              </DropdownMenuItem>
+            </Link>
+
+            {/* For Client */}
+            <Link
+              className={user?.role === "client" ? "" : "hidden"}
+              to={"/profile/client"}
+            >
+              <DropdownMenuItem>
+                <User />
+                Profile
+              </DropdownMenuItem>
+            </Link>
+
+            {/* others Options */}
             <DropdownMenuItem>
               <Inbox />
               Inbox
