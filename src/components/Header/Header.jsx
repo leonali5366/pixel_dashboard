@@ -1,5 +1,4 @@
-import { Bell, Inbox, LogOut, Mail, Settings, Sun, User } from "lucide-react";
-import { BreadcrumbM } from "./Breadcrumb";
+import { Bell, Inbox, LogOut, Settings, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -9,19 +8,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useContext } from "react";
+import { AuthContext } from "@/Context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("pxileClient");
+    localStorage.removeItem("pxileToken");
+    setUser(null);
+    navigate("/auth/login");
+  };
   return (
     <div className="inline-flex w-full items-center justify-between ml-3 border-l pl-3">
-      <BreadcrumbM />
-      <div className="inline-flex items-center gap-x-5">
-        <div className="inline-flex items-center justify-center bg-[#EBECEF] rounded-full size-10">
-          <Sun size={24} />
-        </div>
-        <div className="inline-flex items-center justify-center bg-[#EBECEF] rounded-full size-10">
-          <Mail size={20} />
-        </div>
+      {/* empty div for design */}
+      <div></div>
 
+      <div className="inline-flex items-center gap-x-5">
         <DropdownMenu>
           <DropdownMenuTrigger>
             <div className="inline-flex items-center justify-center bg-[#EBECEF] rounded-full size-10">
@@ -62,7 +68,13 @@ const Header = () => {
             <DropdownMenuItem>
               <div className="inline-flex items-center justify-between gap-x-3">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage
+                    src={
+                      user?.photo
+                        ? user?.photo
+                        : "https://github.com/shadcn.png"
+                    }
+                  />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
@@ -127,15 +139,19 @@ const Header = () => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage
+                src={
+                  user?.photo ? user?.photo : "https://github.com/shadcn.png"
+                }
+              />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[24rem] z-[1000] mr-10">
             <DropdownMenuLabel>
               <div className="inline-flex items-center justify-between w-full">
-                <span className="text-xl">Shohanur Reja Shuvo</span>
-                <span className="font-medium">Admin</span>
+                <span className="text-xl">{user?.name}</span>
+                <span className="font-medium">{user?.role}</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -151,7 +167,11 @@ const Header = () => {
               <Settings />
               Settings
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                handleLogout();
+              }}
+            >
               <LogOut />
               Log Out
             </DropdownMenuItem>

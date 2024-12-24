@@ -7,7 +7,6 @@ import {
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -17,31 +16,18 @@ import {
   SidebarMenuSubItem,
 } from "./ui/sidebar";
 import {
-  BadgeCheck,
-  Bell,
+  Box,
   ChevronDown,
-  ChevronsUpDown,
   Headset,
-  LogOut,
   PanelsTopLeft,
-  PanelTop,
-  Settings,
   ShoppingCart,
-  Sparkles,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "@/Context/UserContext";
 
 export default function AppSidebar() {
+  const { user } = useContext(AuthContext);
   return (
     <Sidebar>
       <SidebarHeader className="border-b h-[4rem] px-5 flex justify-center">
@@ -49,17 +35,19 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="px-3">
         <SidebarMenu className="space-y-2">
-          <SidebarMenuItem>
-            <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-              <Link to="/">
+          <Link to="/">
+            <SidebarMenuItem>
+              <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
                 <div className="w-full inline-flex items-center gap-x-3">
                   <PanelsTopLeft size={24} strokeWidth={1.5} />
                   Overview
                 </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </Link>
+
           {/* orders */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -71,58 +59,116 @@ export default function AppSidebar() {
                   <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
-              <CollapsibleContent>
+
+              {/* Orders option for admin */}
+              <CollapsibleContent
+                className={`${user?.role === "admin" ? "" : "hidden"}`}
+              >
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <Link to="/webdevelopment">
+                    <Link to={"/development"}>
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                         <div className="size-2 rounded-full bg-blue-500"></div>
-                        Web Development
+                        Development
                       </SidebarMenuSubButton>
                     </Link>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
+                    <Link to={"/seo"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-pink-500"></div>
+                        SEO
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <Link to={"/ppc"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-orange-500"></div>
+                        PPC
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <Link to={"/hosting"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-purple-500"></div>
+                        Hosting
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+
+              {/* Orders option for client */}
+              <CollapsibleContent
+                className={`${user?.role === "client" ? "" : "hidden"}`}
+              >
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <Link to={"order/client/myOrder"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        My Orders
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    <Link to={"/order/custom"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Create Custom order
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+
+          {/* packages */}
+
+          <Collapsible
+            className={`${
+              user?.role === "admin" ? " group/collapsible" : "hidden"
+            }`}
+          >
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
+                  <div className="w-full inline-flex items-center gap-x-3">
+                    <Box size={24} strokeWidth={1.5} />
+                    Packages
+                  </div>
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  <SidebarMenuSubItem>
+                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                      <div className="size-2 rounded-full bg-blue-500"></div>
+                      Package List
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
                     <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                       <div className="size-2 rounded-full bg-red-500"></div>
-                      Wordpress Development
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-green-500"></div>
-                      Wix
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-yellow-500"></div>
-                      Shopify
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-pink-500"></div>
-                      SEO
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-orange-500"></div>
-                      PPC
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                      <div className="size-2 rounded-full bg-purple-500"></div>
-                      Hosting
+                      Add New Packages
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 </SidebarMenuSub>
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* users */}
-          <Collapsible className="group/collapsible">
+
+          <Collapsible
+            className={`${
+              user?.role === "admin" ? " group/collapsible" : "hidden"
+            }`}
+          >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
@@ -151,7 +197,9 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
+
           {/* support */}
+
           <Collapsible className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -181,79 +229,8 @@ export default function AppSidebar() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
-          {/* settings */}
-          <SidebarMenuItem>
-            <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
-              <div className="w-full inline-flex items-center gap-x-3">
-                <Settings size={24} strokeWidth={1.5} />
-                Settings
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="h-auto">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-base font-semibold">Shuvo</span>
-                    <span>m@example.com</span>
-                  </div>
-                  <ChevronsUpDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="right"
-                className="w-[20rem] z-[1000] mb-12"
-              >
-                <DropdownMenuLabel className="inline-flex gap-x-2">
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-base font-semibold">Shuvo</span>
-                    <span className="font-normal">m@example.com</span>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Sparkles />
-                  Upgrade to Pro
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <BadgeCheck />
-                  Account
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <PanelTop />
-                  Billing
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell />
-                  Notification
-                  <Badge variant="outline" className="ml-auto text-blue-500">
-                    03
-                  </Badge>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,34 +1,17 @@
-import { Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
-import AppSidebar from "./components/AppSidebar";
-import Header from "./components/Header/Header";
-import { BreadcrumbM } from "./components/Header/Breadcrumb";
-import WebDevelopment from "./pages/WebDevelopment";
+/* eslint-disable no-unused-vars */
+import { RouterProvider } from "react-router-dom";
+import routes from "./pages/Routes/Routes";
+import { useContext } from "react";
+import { AuthContext } from "./Context/UserContext";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
+  const {user} = useContext(AuthContext);
+  
   return (
-    <div className="inline-flex w-full">
-      <SidebarProvider
-        style={{
-          "--sidebar-width": "20rem",
-          "--sidebar-width-mobile": "20rem",
-        }}
-      >
-        <AppSidebar />
-        <div className="w-full flex flex-col h-full relative">
-          <div className="inline-flex min-h-[4rem] w-full items-center px-5 sticky top-0 bg-white z-[999]">
-            <SidebarTrigger />
-            <Header />
-          </div>
-          <div className="w-full bg-[#F5F6FA] h-full">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/webdevelopment" element={<WebDevelopment />} />
-            </Routes>
-          </div>
-        </div>
-      </SidebarProvider>
+    <div>
+      <RouterProvider router={routes} /> 
+      <Toaster position="top-center" reverseOrder={false}/>
     </div>
   );
 };
