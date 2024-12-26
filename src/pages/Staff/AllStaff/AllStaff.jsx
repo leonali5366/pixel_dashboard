@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
 import useRefresh from "@/hooks/useRefresh";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
 
 const AllStaff = () => {
   const [staffs, setStaffs] = useState([]);
