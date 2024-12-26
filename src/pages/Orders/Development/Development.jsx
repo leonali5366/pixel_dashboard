@@ -37,6 +37,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Development = () => {
   const [orders, setOrders] = useState([]);
@@ -48,6 +49,8 @@ const Development = () => {
     revenue: 0,
     ongoingRevenue: 0,
   });
+
+  const navigate = useNavigate();
 
   // Fetch Orders by Service
   useEffect(() => {
@@ -354,7 +357,7 @@ const Development = () => {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order._id} className="hover:bg-gray-50">
+              <tr onClick={()=>{navigate(`/order/single/${order?._id}`)}} key={order._id} className="hover:bg-gray-200 cursor-pointer">
                 <td className="border border-gray-300 p-2">{order._id}</td>
                 <td className="border border-gray-300 p-2">{order.email}</td>
                 <td className="border border-gray-300 p-2">{order.service}</td>

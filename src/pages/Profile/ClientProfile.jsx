@@ -98,7 +98,7 @@ const ProfilePage = () => {
               if (data.status === "success") {
                 toast.success("Profile photo updated successfully!");
                 setShowEditPhotoForm(false);
-                setUser(null);
+                setUser({...user, name: null });
                 setRefresh(refresh + 1);
               }
             })

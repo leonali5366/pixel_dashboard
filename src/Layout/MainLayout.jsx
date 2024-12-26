@@ -14,7 +14,7 @@ const MainLayout = () => {
   return (
     <div>
       {loading ? (
-        <div></div>
+        <div>Loading...</div>
       ) : (
         <div>
           {user?.email ? (

@@ -2,17 +2,26 @@ import { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
 import useRefresh from "@/hooks/useRefresh";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const AllStaff = () => {
   const [staffs, setStaffs] = useState([]);
   const { staffRefresh } = useRefresh();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/staff/all")
-      .then((res) => res.json())
+    fetch("http://localhost:5000/api/v1/client/all/staff")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch staff data");
+        }
+        return res.json();
+      })
       .then((data) => {
         console.log(data);
-        setStaffs(data?.data);
+        setStaffs(data?.staff || []);
+      })
+      .catch((error) => {
+        console.error("Error fetching staff data:", error);
       });
   }, [staffRefresh]);
 

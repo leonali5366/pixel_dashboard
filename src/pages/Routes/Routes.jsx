@@ -14,7 +14,6 @@ import AllClient from "../Client/AllClient/AllClient";
 import AddClient from "../Client/AddClient/AddClient";
 import AllStaff from "../Staff/AllStaff/AllStaff";
 import AddStaff from "../Staff/AddStaff/AddStaff";
-import StaffLogin from "../Auth/Login/StaffLogin";
 import ClientProfile from "../Profile/ClientProfile";
 import StaffProfile from "../Profile/StaffProfile";
 import AdminProfile from "../Profile/AdminProfile";
@@ -25,6 +24,8 @@ import AllPackages from "../Packages/AllPackages/AllPackages";
 import AddANewPackage from "../Packages/AddANewPackage/AddANewPackage";
 import SinglePackage from "../Packages/SinglePackage/SinglePackage";
 import SingleTicket from "../Tickets/SingleTicket/SingleTicket";
+import StaffSinglePage from "../Staff/StaffSinglePage/StaffSinglePage";
+import OrderSinglePage from "../Orders/OrderSinglePage/OrderSinglePage";
 
 const routes = createBrowserRouter([
   {
@@ -37,12 +38,15 @@ const routes = createBrowserRouter([
       { path: "/ppc", element: <Ppc /> },
       { path: "/hosting", element: <Hosting /> },
       { path: "/order/custom", element: <CustomOrder /> },
+      { path: "/order/single/:id", element: <OrderSinglePage /> },
+
       { path: "/order/client/myOrder", element: <ClientOrders /> },
       { path: "/order/client/myOrder", element: <ClientOrders /> },
       { path: "/client/all", element: <AllClient /> },
       { path: "/client/add", element: <AddClient /> },
       { path: "/staff/all", element: <AllStaff /> },
       { path: "/staff/add", element: <AddStaff /> },
+      { path: "/staff/single/:email", element: <StaffSinglePage /> },
       { path: "/profile/client", element: <ClientProfile /> },
       { path: "/profile/staff", element: <StaffProfile /> },
       { path: "/profile/admin", element: <AdminProfile /> },
@@ -60,7 +64,6 @@ const routes = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       { path: "/auth/login", element: <Login /> },
-      { path: "/auth/login/staff", element: <StaffLogin /> },
       { path: "/auth/signup", element: <Signup /> },
     ],
   },
