@@ -103,15 +103,7 @@ const Login = () => {
                   Signup
                 </Link>
               </div>
-              <hr />
-              or
-              <hr />
-              <div className="flex items-center gap-2 mt-3">
-                {`Are you A Staff?`}
-                <Link to="/auth/login/staff" className="hover:underline">
-                  Staff Login
-                </Link>
-              </div>
+              
             </CardFooter>
           </form>
         </CardContent>

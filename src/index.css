@@ -91,7 +91,7 @@
   }
 }
 
-/* For Chrome, Safari, Edge, and Opera */
+/* Hide number input  arrow functions */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -99,6 +99,17 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 /* For Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Disable scroll behavior for number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 input[type="number"] {
   -moz-appearance: textfield;
 }

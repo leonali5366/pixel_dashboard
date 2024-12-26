@@ -7,7 +7,7 @@ const AddStaff = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    password: "373486347",
+    password: "123456", // Default password
     skill: "",
     salary: "",
     salaryType: "",
@@ -26,6 +26,10 @@ const AddStaff = () => {
     "wix developer",
     "ppc expert",
     "hosting expert",
+    "graphic designer",
+    "digital marketer",
+    "content writer",
+    "video editor",
   ];
 
   const salaryTypes = ["monthly", "hourly"];
@@ -42,14 +46,23 @@ const AddStaff = () => {
     setErrors(null);
     e.preventDefault();
 
-    fetch("http://localhost:5000/api/v1/staff/create", {
+    console.log(formData);
+
+    fetch("http://localhost:5000/api/v1/client/create/staff", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((error) => {
+            throw new Error(error.message);
+          });
+        }
+        return res.json();
+      })
       .then((data) => {
         if (data?.status === "success") {
           toast.success("Staff member added successfully");
@@ -67,6 +80,9 @@ const AddStaff = () => {
         } else {
           setErrors(data?.message);
         }
+      })
+      .catch((error) => {
+        setErrors(error.message);
       })
       .finally(() => {
         setLoading(false);

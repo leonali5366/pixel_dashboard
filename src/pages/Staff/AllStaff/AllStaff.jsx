@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
 import useRefresh from "@/hooks/useRefresh";
+import { Link } from "react-router-dom";
 
 const AllStaff = () => {
   const [staffs, setStaffs] = useState([]);
   const { staffRefresh } = useRefresh();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/staff/all")
-      .then((res) => res.json())
+    fetch("http://localhost:5000/api/v1/client/all/staff")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch staff data");
+        }
+        return res.json();
+      })
       .then((data) => {
         console.log(data);
-        setStaffs(data?.data);
+        setStaffs(data?.staff || []);
+      })
+      .catch((error) => {
+        console.error("Error fetching staff data:", error);
       });
   }, [staffRefresh]);
 
@@ -27,15 +36,15 @@ const AllStaff = () => {
       {/* Staff Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {staffs.length > 0 ? (
-          staffs.map((staff, index) => (
-            <div
-              key={index}
+          staffs.map((staff) => (
+            <Link to={`/staff/single/${staff?.email}`} // Use the correct path
+              key={staff?.email} // Use a unique key like _id if available
               className="bg-white shadow-md rounded-lg cursor-pointer overflow-hidden hover:shadow-lg transition-shadow duration-200"
             >
               {/* Photo */}
               <img
                 src={staff.photo || "https://github.com/shadcn.png"}
-                alt={staff.name}
+                alt={staff.name || "Staff Member"}
                 className="w-full h-40 object-cover"
               />
 
@@ -84,7 +93,7 @@ const AllStaff = () => {
                     : "N/A"}
                 </p>
               </div>
-            </div>
+            </Link>
           ))
         ) : (
           <p className="text-gray-500 col-span-full text-center">
