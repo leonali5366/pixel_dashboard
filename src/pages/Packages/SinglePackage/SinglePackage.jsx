@@ -1,8 +1,32 @@
 /* eslint-disable no-unused-vars */
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import useRefresh from "@/hooks/useRefresh";
+import { ArrowLeftToLine, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const SinglePackage = () => {
   const { id } = useParams();
@@ -14,6 +38,10 @@ const SinglePackage = () => {
   });
   const [newPlan, setNewPlan] = useState("");
   const [ref, setRef] = useState(1);
+
+  const [isFormLoading, setIsFormLoading] = useState(false);
+  const [isAddPlanLoading, setIsAddPlanLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/v1/package/${id}`)
@@ -35,6 +63,7 @@ const SinglePackage = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    setIsFormLoading(true);
     fetch(`http://localhost:5000/api/v1/package/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -47,10 +76,12 @@ const SinglePackage = () => {
         setRef(ref + 1);
       })
       .catch((err) => alert("Error updating package"));
+    setIsFormLoading(false);
   };
 
   const handleAddPlan = (e) => {
     e.preventDefault();
+    setIsAddPlanLoading(true);
     console.log(newPlan);
     fetch(`http://localhost:5000/api/v1/package/addPlan/${id}`, {
       method: "PUT",
@@ -65,6 +96,7 @@ const SinglePackage = () => {
         setRef(ref + 1);
       })
       .catch((err) => alert("Error adding plan"));
+    setIsAddPlanLoading(false);
   };
 
   const handleDeletePlan = (planId) => {
@@ -84,74 +116,150 @@ const SinglePackage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">
-        Edit Package: {pkg.name || "Loading..."}
-      </h1>
+    <div className="p-5 space-y-10">
+      <div className="flex items-center gap-3">
+        <ArrowLeftToLine
+          onClick={() => navigate("/package/all")}
+          className="cursor-pointer"
+        />
+        <span className="text-xl font-bold opacity-98">
+          Edit Package: {pkg.name || "Loading..."}
+        </span>
+      </div>
 
       {/* Update Package Form */}
-      <form className="space-y-4" onSubmit={handleFormSubmit}>
-        <div>
-          <label className="block text-gray-700 font-medium mb-1">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 font-medium mb-1">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700 font-medium mb-1">Price</label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-        >
-          Update Package
-        </button>
+      <form onSubmit={handleFormSubmit}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Package</CardTitle>
+            <CardDescription>
+              Change Name, Description and Price
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <label className="max-w-[600px] flex flex-col gap-1">
+              <span className="text-sm font-medium opacity-90">Name</span>
+              <Input
+                type="text"
+                defaultValue={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </label>
+            <label className="max-w-[600px] flex flex-col gap-1">
+              <span className="text-sm font-medium opacity-90">
+                Description
+              </span>
+              <Textarea
+                defaultValue={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </label>
+            <label className="max-w-[600px] flex flex-col gap-1">
+              <span className="text-sm font-medium opacity-90">Price</span>
+              <Input
+                type="number"
+                defaultValue={formData.price}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
+              />
+            </label>
+          </CardContent>
+          <Separator />
+          <CardFooter className="mt-4 w-full flex justify-end">
+            <Button type="submit" disabled={isFormLoading}>
+              {isFormLoading ? <Loader className="animate-spin" /> : "Update"}
+            </Button>
+          </CardFooter>
+        </Card>
       </form>
 
       {/* Add New Plan Form */}
-      <div className="mt-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-2">Add New Plan:</h2>
-        <form className="flex items-center space-x-4" onSubmit={handleAddPlan}>
-          <input
-            type="text"
-            value={newPlan}
-            onChange={(e) => setNewPlan(e.target.value)}
-            placeholder="Enter plan description"
-            className="flex-grow p-2 border border-gray-300 rounded-lg"
-          />
-          <button
-            type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-          >
-            Add Plan
-          </button>
-        </form>
-      </div>
+
+      <form onSubmit={handleAddPlan}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Add New Plan</CardTitle>
+            <CardDescription>Add a new plan to the package</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Input
+              type="text"
+              onChange={(e) =>
+                setNewPlan({ ...newPlan, price: e.target.value })
+              }
+              placeholder="Enter plan name.."
+              className="max-w-[600px]"
+            />
+          </CardContent>
+          <Separator />
+          <CardFooter className="mt-4 w-full flex justify-end">
+            <Button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600"
+              disabled={isAddPlanLoading}
+            >
+              {isAddPlanLoading ? (
+                <Loader className="animate-spin" />
+              ) : (
+                "Add Plan"
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
+
+      {pkg.plans && (
+        <Card className="border-red-500">
+          <CardHeader>
+            <CardTitle className="text-xl">All Plans</CardTitle>
+            <CardDescription>Delete plan for {pkg.name}</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {pkg.plans?.map((plan, i) => {
+              return (
+                <div
+                  key={i}
+                  className="w-full flex items-center justify-between gap-5"
+                >
+                  <Input defaultValue={plan.plan} disabled />
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <Button variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete this plan and remove data from servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeletePlan(plan._id)}
+                        >
+                          Countinue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Plans List */}
-      {pkg.plans && pkg.plans.length > 0 && (
+      {/* {pkg.plans && pkg.plans.length > 0 && (
         <div className="mt-6">
           <h2 className="text-xl font-bold text-gray-800 mb-2">Plans:</h2>
           <ul className="space-y-2">
@@ -171,7 +279,7 @@ const SinglePackage = () => {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

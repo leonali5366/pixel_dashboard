@@ -1,4 +1,26 @@
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import useRefresh from "@/hooks/useRefresh";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon, Loader } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +35,8 @@ const AddStaff = () => {
     salaryType: "",
     startingDate: "",
   });
+
+  console.log(formData);
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -31,9 +55,11 @@ const AddStaff = () => {
   const salaryTypes = ["monthly", "hourly"];
 
   // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleChange = (value) => {
+    setFormData({ ...formData, skill: value });
+  };
+  const handleSalaryChange = (value) => {
+    setFormData({ ...formData, salaryType: value });
   };
 
   // Handle form submission
@@ -74,132 +100,185 @@ const AddStaff = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-8 bg-white shadow-md rounded-lg">
+    <Card className="max-w-4xl mx-auto mt-10">
       {/* Page Title */}
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        Add Staff Member
-      </h2>
+      <CardHeader>
+        <CardTitle>Add Staff Member</CardTitle>
+      </CardHeader>
+      <Separator />
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">Name</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter staff name"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+      <CardContent className="mt-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          {/* Name */}
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">Name</span>
+            <Input
+              type="text"
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              placeholder="Enter staff name"
+              required
+            />
+          </label>
 
-        {/* Email */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter email address"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          {/* Email */}
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">Email</span>
+            <Input
+              type="email"
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="Enter email address"
+              required
+            />
+          </label>
 
-        {/* Skill Selection */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">Skill</label>
-          <select
-            name="skill"
-            value={formData.skill}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          >
-            <option value="" disabled>
-              Select a skill
-            </option>
-            {skills.map((skill, index) => (
-              <option key={index} value={skill}>
-                {skill}
+          {/* Skill Selection */}
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">Skill</span>
+            <Select onValueChange={handleChange} required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a skill" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Skills</SelectLabel>
+                  {skills.map((skill, i) => {
+                    return (
+                      <SelectItem value={skill} key={i}>
+                        {skill}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </label>
+
+          {/* Salary */}
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">
+              Salary (in USD)
+            </span>
+            <Input
+              type="number"
+              onChange={(e) =>
+                setFormData({ ...formData, salary: e.target.value })
+              }
+              placeholder="Enter salary amount"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">Salary Type</span>
+            <Select onValueChange={handleSalaryChange} required>
+              <SelectTrigger className="capitalize">
+                <SelectValue placeholder="Select salary type" />
+              </SelectTrigger>
+              <SelectContent>
+                {salaryTypes.map((skill, i) => {
+                  return (
+                    <SelectItem value={skill} key={i} className="capitalize">
+                      {skill}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </label>
+
+          {/* Salary Type Selection */}
+          {/* <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">Salary Type</span>
+            <select
+              name="salaryType"
+              value={formData.salaryType}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="" disabled>
+                Select salary type
               </option>
-            ))}
-          </select>
-        </div>
+              {salaryTypes.map((type, index) => (
+                <option key={index} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              ))}
+            </select>
+          </label> */}
 
-        {/* Salary */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">
-            Salary (in USD)
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium opacity-90">
+              Starting Date
+            </span>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full pl-3 text-left font-normal",
+                    !formData.startingDate && "text-muted-foreground"
+                  )}
+                >
+                  {formData.startingDate ? (
+                    format(formData.startingDate, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  required
+                  mode="single"
+                  selected={formData.startingDate}
+                  onSelect={(e) =>
+                    setFormData({ ...formData, startingDate: e })
+                  }
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                  initialFocus
+                  className="rounded-md border"
+                />
+              </PopoverContent>
+            </Popover>
           </label>
-          <input
-            type="number"
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-            placeholder="Enter salary amount"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
 
-        {/* Salary Type Selection */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">
-            Salary Type
-          </label>
-          <select
-            name="salaryType"
-            value={formData.salaryType}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          >
-            <option value="" disabled>
-              Select salary type
-            </option>
-            {salaryTypes.map((type, index) => (
-              <option key={index} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
+          {/* Starting Date */}
+          {/* <div>
+            <label className="block mb-1 text-gray-700 font-medium">
+              Starting Date
+            </label>
+            <input
+              type="date"
+              name="startingDate"
+              value={formData.startingDate}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div> */}
 
-        {/* Starting Date */}
-        <div>
-          <label className="block mb-1 text-gray-700 font-medium">
-            Starting Date
-          </label>
-          <input
-            type="date"
-            name="startingDate"
-            value={formData.startingDate}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
+          {/* Error Message */}
+          {errors && <p className="text-red-600 text-center">{errors}</p>}
 
-        {/* Error Message */}
-        {errors && <p className="text-red-600 text-center">{errors}</p>}
-
-        {/* Submit Button */}
-        <div className="text-center">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-md transition duration-300"
-            disabled={loading}
-          >
-            {loading ? "Adding..." : "Add Staff"}
-          </button>
-        </div>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <div className="text-center mt-4">
+            <Button type="submit" disabled={loading}>
+              {loading ? <Loader className="animate-spin" /> : "Add Staff"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

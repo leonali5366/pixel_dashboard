@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
 import useRefresh from "@/hooks/useRefresh";
+import { Card, CardContent } from "@/components/ui/card";
 
 const AllStaff = () => {
   const [staffs, setStaffs] = useState([]);
@@ -28,63 +29,65 @@ const AllStaff = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {staffs.length > 0 ? (
           staffs.map((staff, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-md rounded-lg cursor-pointer overflow-hidden hover:shadow-lg transition-shadow duration-200"
-            >
-              {/* Photo */}
+            <Card key={index}>
               <img
                 src={staff.photo || "https://github.com/shadcn.png"}
                 alt={staff.name}
-                className="w-full h-40 object-cover"
+                className="w-full h-40 object-cover rounded-t"
               />
+              <CardContent className="mt-2">
+                {/* Photo */}
 
-              {/* Content */}
-              <div className="p-4">
-                {/* Name */}
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {staff.name || "N/A"}
-                </h2>
+                {/* Content */}
+                <div className="flex flex-col gap-1">
+                  {/* Name */}
+                  <h2 className="text-xl font-semibold opacity-90">
+                    {staff.name || "N/A"}
+                  </h2>
 
-                {/* Email */}
-                <p className="text-gray-500 text-sm mt-1">
-                  Email: {staff.email || "N/A"}
-                </p>
+                  {/* Email */}
+                  <p className="text-sm font-medium opacity-90">
+                    Email: {staff.email || "N/A"}
+                  </p>
 
-                {/* Skill */}
-                <p className="text-gray-500 text-sm mt-1">
-                  Skill: {staff.skill || "No Skill Mentioned"}
-                </p>
+                  {/* Skill */}
+                  <p className="text-sm font-medium opacity-90">
+                    Skill: {staff.skill || "No Skill Mentioned"}
+                  </p>
 
-                {/* Salary */}
-                <p className="text-gray-700 text-sm mt-1">
-                  Salary:{" "}
-                  <span className="font-semibold">
-                    ${staff.salary || "0.00"}
-                  </span>{" "}
-                  ({staff.salaryType || "N/A"})
-                </p>
+                  {/* Salary */}
+                  <p className="text-sm font-medium opacity-90">
+                    Salary:{" "}
+                    <span className="font-semibold">
+                      ${staff.salary || "0.00"}
+                    </span>{" "}
+                    ({staff.salaryType || "N/A"})
+                  </p>
 
-                {/* Status */}
-                <p
-                  className={`text-sm font-semibold mt-1 ${
-                    staff.status === "active"
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  Status: {staff.status || "N/A"}
-                </p>
+                  {/* Status */}
+                  <p className={`text-sm font-medium opacity-90 `}>
+                    Status:{" "}
+                    <span
+                      className={`${
+                        staff.status === "active"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {staff.status || "N/A"}
+                    </span>
+                  </p>
 
-                {/* Added Date */}
-                <p className="text-gray-500 text-xs mt-2">
-                  Added on:{" "}
-                  {staff.createdAt
-                    ? new Date(staff.createdAt).toLocaleDateString()
-                    : "N/A"}
-                </p>
-              </div>
-            </div>
+                  {/* Added Date */}
+                  <p className="text-xs font-medium opacity-90">
+                    Added on:{" "}
+                    {staff.createdAt
+                      ? new Date(staff.createdAt).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           ))
         ) : (
           <p className="text-gray-500 col-span-full text-center">

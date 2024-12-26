@@ -27,7 +27,7 @@ const MainLayout = () => {
               >
                 <AppSidebar />
                 <div className="w-full flex flex-col h-full relative">
-                  <div className="inline-flex min-h-[4rem] w-full items-center px-5 sticky top-0 bg-white z-[999]">
+                  <div className="inline-flex min-h-[4rem] w-full items-center px-5 sticky top-0 bg-white z-[999] border-b">
                     <SidebarTrigger />
                     <Header />
                   </div>
