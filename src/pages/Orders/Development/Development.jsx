@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import useOrders from "@/hooks/useOrders";
 import {
   flexRender,
   getCoreRowModel,
@@ -36,69 +37,29 @@ import {
   CircleSlash2,
   DollarSign,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Development = () => {
-  const [orders, setOrders] = useState([]);
-  const [stats, setStats] = useState({
-    totalOrders: 0,
-    ongoingOrders: 0,
-    completedOrders: 0,
-    canceledOrders: 0,
-    revenue: 0,
-    ongoingRevenue: 0,
-  });
-
+  const { developmentOrders } = useOrders();
   const navigate = useNavigate();
 
-  // Fetch Orders by Service
-  useEffect(() => {
-    fetch(
-      `http://localhost:5000/api/v1/order/get/orderByService?service=development`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data?.status === "success") {
-          setOrders(data.data);
-          calculateStats(data.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching orders:", error));
-  }, []);
-
-  // Calculate statistics dynamically
-  const calculateStats = (ordersData) => {
-    const totalOrders = ordersData.length;
-
-    const ongoingOrders = ordersData.filter(
+  const stats = {
+    totalOrders: developmentOrders.length,
+    ongoingOrders: developmentOrders.filter(
       (order) => order.status === "in progress"
-    ).length;
-
-    const completedOrders = ordersData.filter(
-      (order) => order.status === "Completed"
-    ).length;
-
-    const canceledOrders = ordersData.filter(
-      (order) => order.status === "Canceled"
-    ).length;
-
-    const revenue = ordersData
-      .filter((order) => order.status === "Completed")
-      .reduce((sum, order) => sum + order.moneyPaid, 0);
-
-    const ongoingRevenue = ordersData
+    ).length,
+    completedOrders: developmentOrders.filter(
+      (order) => order.status === "finished"
+    ).length,
+    canceledOrders: developmentOrders.filter(
+      (order) => order.status === "cancelled"
+    ).length,
+    revenue: developmentOrders
+      .filter((order) => order.status === "finished")
+      .reduce((sum, order) => sum + order.moneyPaid, 0),
+    ongoingRevenue: developmentOrders
       .filter((order) => order.status === "in progress")
-      .reduce((sum, order) => sum + order.moneyDue, 0);
-
-    setStats({
-      totalOrders,
-      ongoingOrders,
-      completedOrders,
-      canceledOrders,
-      revenue,
-      ongoingRevenue,
-    });
+      .reduce((sum, order) => sum + order.moneyDue, 0),
   };
 
   const columns = [
@@ -131,9 +92,9 @@ const Development = () => {
 
   // React Table initialization
   const table = useReactTable({
-    data: orders,
+    data: developmentOrders,
     columns,
-    pageCount: Math.ceil(orders.length / 5),
+    pageCount: Math.ceil(developmentOrders.length / 5),
     initialState: {
       pagination: {
         pageSize: 5,
@@ -291,6 +252,11 @@ const Development = () => {
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      className="cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        navigate(`/order/single/${row.original._id}`);
+                        window.scrollTo(0, 0);
+                      }}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="text-left">
@@ -315,69 +281,8 @@ const Development = () => {
               </TableBody>
             </Table>
           </div>
-
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
         </CardContent>
       </Card>
-
-      {/* Orders Table */}
-      {/* <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Order Details
-        </h2>
-        <table className="min-w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-2 text-left">Order ID</th>
-              <th className="border border-gray-300 p-2 text-left">Email</th>
-              <th className="border border-gray-300 p-2 text-left">Service</th>
-              <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">Budget</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr onClick={()=>{navigate(`/order/single/${order?._id}`)}} key={order._id} className="hover:bg-gray-200 cursor-pointer">
-                <td className="border border-gray-300 p-2">{order._id}</td>
-                <td className="border border-gray-300 p-2">{order.email}</td>
-                <td className="border border-gray-300 p-2">{order.service}</td>
-                <td
-                  className={`border border-gray-300 p-2 ${
-                    order.status === "in progress"
-                      ? "text-yellow-600"
-                      : order.status === "Completed"
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {order.status}
-                </td>
-                <td className="border border-gray-300 p-2">${order.budget}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div> */}
     </div>
   );
 };

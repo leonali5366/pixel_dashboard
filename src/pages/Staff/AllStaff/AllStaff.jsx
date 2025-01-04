@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Briefcase } from "lucide-react";
 import useRefresh from "@/hooks/useRefresh";
 import { Card, CardContent } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const AllStaff = () => {
   const [staffs, setStaffs] = useState([]);
   const { staffRefresh } = useRefresh();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:5000/api/v1/client/all/staff")
@@ -37,7 +39,13 @@ const AllStaff = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {staffs.length > 0 ? (
           staffs.map((staff, index) => (
-            <Card key={index}>
+            <Card
+              onClick={() => {
+                navigate(`/staff/single/${staff.email}`);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              key={index}
+            >
               <img
                 src={staff.photo || "https://github.com/shadcn.png"}
                 alt={staff.name}

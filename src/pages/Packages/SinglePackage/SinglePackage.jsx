@@ -31,14 +31,14 @@ import { useNavigate, useParams } from "react-router-dom";
 const SinglePackage = () => {
   const { id } = useParams();
   const [pkg, setPkg] = useState({});
+  const [client, setClient] = useState({});
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
   });
   const [newPlan, setNewPlan] = useState("");
-  const [ref, setRef] = useState(1);
-
+  const { packageRefresh, setPackageRefresh } = useRefresh();
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [isAddPlanLoading, setIsAddPlanLoading] = useState(false);
   const navigate = useNavigate();
@@ -48,13 +48,14 @@ const SinglePackage = () => {
       .then((res) => res.json())
       .then((data) => {
         setPkg(data.data);
+        setClient(data.client);
         setFormData({
           name: data.data.name || "",
           description: data.data.description || "",
           price: data.data.price || "",
         });
       });
-  }, [id, ref]);
+  }, [id, packageRefresh]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +74,7 @@ const SinglePackage = () => {
       .then((data) => {
         toast.success("Package updated successfully!");
         setPkg(data.data);
-        setRef(ref + 1);
+        setPackageRefresh(packageRefresh + 1);
       })
       .catch((err) => alert("Error updating package"));
     setIsFormLoading(false);
@@ -93,7 +94,7 @@ const SinglePackage = () => {
         toast.success("Plan added successfully!");
         setPkg((prev) => ({ ...prev, plans: [...prev.plans, data.data] }));
         setNewPlan("");
-        setRef(ref + 1);
+        setPackageRefresh(packageRefresh + 1);
       })
       .catch((err) => alert("Error adding plan"));
     setIsAddPlanLoading(false);
@@ -110,16 +111,54 @@ const SinglePackage = () => {
           ...prev,
           plans: prev.plans.filter((plan) => plan._id !== planId),
         }));
-        setRef(ref + 1);
+        setPackageRefresh(packageRefresh + 1);
       })
       .catch((err) => alert("Error deleting plan"));
+  };
+
+  const handlePackageDelete = () => {
+    fetch(`http://localhost:5000/api/v1/package/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        toast.success("Package deleted successfully!");
+        navigate("/package/public/all");
+        setPackageRefresh(packageRefresh + 1);
+      })
+      .catch((err) => alert("Error deleting package"));
+  };
+
+  const handleCustomPackageAccept = () => {
+    fetch(`http://localhost:5000/api/v1/package/custom/accept/${id}`, {
+      method: "PUT",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        toast.success("Package accepted successfully!");
+        navigate("/package/public/all");
+        setPackageRefresh(packageRefresh + 1);
+      })
+      .catch((err) => alert("Error accepting package"));
+  };
+  const handleCustomPackageReject = () => {
+    fetch(`http://localhost:5000/api/v1/package/custom/reject/${id}`, {
+      method: "PUT",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        toast.success("Package reject successfully!");
+        navigate("/package/public/all");
+        setPackageRefresh(packageRefresh + 1);
+      })
+      .catch((err) => alert("Error rejecting package"));
   };
 
   return (
     <div className="p-5 space-y-10">
       <div className="flex items-center gap-3">
         <ArrowLeftToLine
-          onClick={() => navigate("/package/all")}
+          onClick={() => navigate("/package/public/all")}
           className="cursor-pointer"
         />
         <span className="text-xl font-bold opacity-98">
@@ -127,15 +166,63 @@ const SinglePackage = () => {
         </span>
       </div>
 
+      {/* Client Details */}
+      <div
+        className={`bg-gray-50 p-6 space-y-6 ${
+          pkg?.request === false ? "hidden" : ""
+        }`}
+      >
+        {/* Client Details Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 w-full">
+          <div className="flex items-start gap-6">
+            <img
+              src={client?.photo || "https://via.placeholder.com/150"}
+              alt="Client"
+              className="w-24 h-24 rounded-full"
+            />
+            <div className="flex flex-col justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">
+                  {client?.name || "Loading..."}
+                </h1>
+                <p className="text-gray-600 text-sm mt-1">
+                  {client?.email || "Email not available"}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  {client?.phone || "Phone not available"}
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  {client?.address || "Address not available"}
+                </p>
+              </div>
+              <button
+                onClick={() => alert(`Going to ${client.name}'s profile...`)}
+                className="mt-4 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow"
+              >
+                Go to Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Update Package Form */}
       <form onSubmit={handleFormSubmit}>
         <Card>
-          <CardHeader>
-            <CardTitle className="text-xl">Package</CardTitle>
-            <CardDescription>
-              Change Name, Description and Price
-            </CardDescription>
-          </CardHeader>
+          <div className="flex justify-between items-center w-full">
+            <CardHeader>
+              <CardTitle className="text-xl">Package</CardTitle>
+              <CardDescription>
+                Change Name, Description and Price
+              </CardDescription>
+            </CardHeader>
+            <CardHeader>
+              <p className="text-gray-900 text-sm flex ">
+                <p className="font-semibold mr-2">Status :</p>{" "}
+                {pkg?.status || "Address not available"}
+              </p>
+            </CardHeader>
+          </div>
           <CardContent className="flex flex-col gap-4">
             <label className="max-w-[600px] flex flex-col gap-1">
               <span className="text-sm font-medium opacity-90">Name</span>
@@ -258,28 +345,71 @@ const SinglePackage = () => {
         </Card>
       )}
 
-      {/* Plans List */}
-      {/* {pkg.plans && pkg.plans.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Plans:</h2>
-          <ul className="space-y-2">
-            {pkg.plans.map((plan) => (
-              <li
-                key={plan._id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white shadow-sm"
+      {/* Delete A plan Button for packages*/}
+      <div className={pkg?.request === false ? "block" : "hidden"}>
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <Button variant="destructive">Delete Package</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete this
+                package and remove data from servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  handlePackageDelete();
+                }}
               >
-                <p className="text-gray-800 font-medium">{plan.plan}</p>
-                <button
-                  onClick={() => handleDeletePlan(plan._id)}
-                  className="text-red-500 font-medium hover:underline"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+
+      {/* Delete A plan Reject for custom packages*/}
+      <div
+        className={`${pkg?.request === true ? "block" : "hidden"} ${
+          pkg?.status === "approved" ? "hidden" : ""
+        }`}
+      >
+        <div className="flex flex-col items-center justify-center gap-4 p-6 bg-white rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold">
+            What action would you like to take?
+          </h3>
+          <p className="text-sm text-gray-600">
+            Please choose an appropriate action for this package. This action
+            cannot be undone.
+          </p>
+          <div className="flex justify-center gap-3">
+            <button
+              onClick={() => {
+                handleCustomPackageAccept();
+              }}
+              className="px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={() => {
+                handleCustomPackageReject();
+              }}
+              className="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600"
+            >
+              Reject
+            </button>
+            <button className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
+              Send To Review
+            </button>
+          </div>
         </div>
-      )} */}
+      </div>
     </div>
   );
 };

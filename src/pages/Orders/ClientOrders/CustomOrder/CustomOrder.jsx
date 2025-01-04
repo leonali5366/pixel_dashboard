@@ -1,4 +1,5 @@
 import { AuthContext } from "@/Context/UserContext";
+import useGetClientOrders from "@/hooks/useGetClientOrders";
 import useRefresh from "@/hooks/useRefresh";
 import { useContext, useState } from "react";
 import toast from "react-hot-toast";
@@ -7,7 +8,7 @@ import { ClipLoader } from "react-spinners";
 
 const CustomOrder = () => {
   const { user } = useContext(AuthContext);
-  const { orderRefresh, setOrderRefresh } = useRefresh();
+  const {clientOrderRefresh, setClientOrderRefresh} = useGetClientOrders()
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -67,8 +68,8 @@ const CustomOrder = () => {
             hasHost: false,
             ppcPlatforms: [],
           });
-          setOrderRefresh(orderRefresh + 1);
-          navigate("/order/client/myOrder");
+          setClientOrderRefresh(clientOrderRefresh + 1)
+          navigate("/order/client/new");
           window.scrollTo(0, 0);
         } else {
           setError(data?.message);
@@ -147,14 +148,13 @@ const CustomOrder = () => {
                 onChange={handleInputChange}
                 className="w-full p-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               >
-                <option value="" disabled>
-                  Select technology
+                <option selected disabled>
+                  Select a Technology
                 </option>
                 <option value="mern">MERN</option>
                 <option value="wordpress">WordPress</option>
                 <option value="shopify">Shopify</option>
                 <option value="wix">Wix</option>
-                <option value="custom">Wix</option>
               </select>
             </div>
 

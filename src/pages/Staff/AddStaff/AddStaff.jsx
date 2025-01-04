@@ -81,15 +81,9 @@ const AddStaff = () => {
       },
       body: JSON.stringify(formData),
     })
-      .then((res) => {
-        if (!res.ok) {
-          return res.json().then((error) => {
-            throw new Error(error.message);
-          });
-        }
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         if (data?.status === "success") {
           toast.success("Staff member added successfully");
           setFormData({
@@ -116,7 +110,7 @@ const AddStaff = () => {
   };
 
   return (
-    <Card className="max-w-4xl mx-auto mt-10">
+    <Card className="max-w-4xl mx-auto mt-10 mb-20">
       {/* Page Title */}
       <CardHeader>
         <CardTitle>Add Staff Member</CardTitle>
@@ -207,26 +201,7 @@ const AddStaff = () => {
             </Select>
           </label>
 
-          {/* Salary Type Selection */}
-          {/* <label className="flex flex-col gap-1">
-            <span className="text-sm font-medium opacity-90">Salary Type</span>
-            <select
-              name="salaryType"
-              value={formData.salaryType}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="" disabled>
-                Select salary type
-              </option>
-              {salaryTypes.map((type, index) => (
-                <option key={index} value={type}>
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </option>
-              ))}
-            </select>
-          </label> */}
+          
 
           <label className="flex flex-col gap-1">
             <span className="text-sm font-medium opacity-90">
@@ -258,30 +233,12 @@ const AddStaff = () => {
                   onSelect={(e) =>
                     setFormData({ ...formData, startingDate: e })
                   }
-                  disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
-                  }
                   initialFocus
                   className="rounded-md border"
                 />
               </PopoverContent>
             </Popover>
           </label>
-
-          {/* Starting Date */}
-          {/* <div>
-            <label className="block mb-1 text-gray-700 font-medium">
-              Starting Date
-            </label>
-            <input
-              type="date"
-              name="startingDate"
-              value={formData.startingDate}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div> */}
 
           {/* Error Message */}
           {errors && <p className="text-red-600 text-center">{errors}</p>}

@@ -29,6 +29,7 @@ import { UserPlus } from "lucide-react";
 
 export default function AppSidebar() {
   const { user } = useContext(AuthContext);
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b h-[4rem] px-5 flex justify-center">
@@ -67,12 +68,78 @@ export default function AppSidebar() {
               >
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <Link to={"/development"}>
+                    <Link to={"/new"}>
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
-                        <div className="size-2 rounded-full bg-blue-500"></div>
-                        Development
+                        <div className="size-2 rounded-full bg-green-500"></div>
+                        New Orders
                       </SidebarMenuSubButton>
                     </Link>
+                  </SidebarMenuSubItem>
+                  <SidebarMenuSubItem>
+                    {/* Development */}
+
+                    <Collapsible
+                      className={`${
+                        user?.role === "admin" ? "group/collapsible" : "hidden"
+                      }`}
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton className="text-[16px] transition-all duration-300 group-data-[state=open]/collapsible:bg-blue-500 py-6 group-data-[state=open]/collapsible:text-white font-medium">
+                            <div className="w-full inline-flex items-center gap-x-3">
+                              <ShoppingCart size={24} strokeWidth={1.5} />
+                              Development
+                            </div>
+                            <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+
+                        {/* Orders option for admin */}
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {/* MERN */}
+                            <SidebarMenuSubItem>
+                              <Link to={"/development/mern"}>
+                                <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                                  <div className="size-2 rounded-full bg-blue-500"></div>
+                                  MERN
+                                </SidebarMenuSubButton>
+                              </Link>
+                            </SidebarMenuSubItem>
+
+                            {/* Wordpress */}
+                            <SidebarMenuSubItem>
+                              <Link to={"/development/wordpress"}>
+                                <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                                  <div className="size-2 rounded-full bg-green-500"></div>
+                                  Wordpress
+                                </SidebarMenuSubButton>
+                              </Link>
+                            </SidebarMenuSubItem>
+
+                            {/* Shopify */}
+                            <SidebarMenuSubItem>
+                              <Link to={"/development/shopify"}>
+                                <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                                  <div className="size-2 rounded-full bg-green-500"></div>
+                                  Shopify
+                                </SidebarMenuSubButton>
+                              </Link>
+                            </SidebarMenuSubItem>
+
+                            {/* Wix */}
+                            <SidebarMenuSubItem>
+                              <Link to={"/development/wix"}>
+                                <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                                  <div className="size-2 rounded-full bg-green-500"></div>
+                                  Wix
+                                </SidebarMenuSubButton>
+                              </Link>
+                            </SidebarMenuSubItem>
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
                     <Link to={"/seo"}>
@@ -107,10 +174,28 @@ export default function AppSidebar() {
               >
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <Link to={"order/client/myOrder"}>
+                    <Link to={"/order/client/new"}>
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                         <div className="size-2 rounded-full bg-blue-500"></div>
-                        My Orders
+                        New Orders
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <Link to={"/order/client/current"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Current Orders
+                      </SidebarMenuSubButton>
+                    </Link>
+                  </SidebarMenuSubItem>
+
+                  <SidebarMenuSubItem>
+                    <Link to={"/order/client/previous"}>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Previous Orders
                       </SidebarMenuSubButton>
                     </Link>
                   </SidebarMenuSubItem>
@@ -182,24 +267,71 @@ export default function AppSidebar() {
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <SidebarMenuSub>
-                  <Link to={'/package/all'}>
+                  <Link to={"/package/public/all"}>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                         <div className="size-2 rounded-full bg-green-500"></div>
-                        Packages
+                        Public Packages
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   </Link>
 
-                  
+                  <Link
+                    className={`${user?.role === "admin" ? "" : "hidden"}`}
+                    to={"/package/custom/all"}
+                  >
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-slate-700"></div>
+                        Custom Packages
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
 
-                 
+                  <Link
+                    className={`${user?.role === "admin" ? "" : "hidden"}`}
+                    to={"/package/custom/allRequests"}
+                  >
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-blue-500"></div>
+                        Custom Package Requests
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
 
-                  <Link className={`${user?.role === 'admin' ? "" : "hidden"}`} to={'/package/create'}>
+                  <Link
+                    className={`${user?.role === "admin" ? "" : "hidden"}`}
+                    to={"/package/create"}
+                  >
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
                         <div className="size-2 rounded-full bg-red-500"></div>
                         Add New Packages
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+
+                  <Link
+                    className={`${user?.role === "client" ? "" : "hidden"}`}
+                    to={"/package/myRequests"}
+                  >
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-purple-600"></div>
+                        My Custom Packages
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  </Link>
+
+                  <Link
+                    className={`${user?.role === "client" ? "" : "hidden"}`}
+                    to={"/package/create/custom"}
+                  >
+                    <SidebarMenuSubItem>
+                      <SidebarMenuSubButton className="text-[16px] pl-3 py-5 font-medium">
+                        <div className="size-2 rounded-full bg-red-500"></div>
+                        Request Custom Packages
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   </Link>

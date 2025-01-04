@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,9 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { AuthContext } from "@/Context/UserContext";
 import useRefresh from "@/hooks/useRefresh";
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
 
-const AllPackages = () => {
+const ClientAllCustomPackageRequest = () => {
   const [packages, setPackages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -24,8 +24,11 @@ const AllPackages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/package`);
+        const response = await fetch(
+          `http://localhost:5000/api/v1/package/custom/${user?.email}`
+        );
         const data = await response.json();
+        console.log(data);
         if (data.status === "success" && data.data) {
           setPackages(data.data);
 
@@ -41,7 +44,7 @@ const AllPackages = () => {
       }
     };
     fetchPackages();
-  }, [packageRefresh]);
+  }, [user?.email, packageRefresh]);
 
   // Filter packages based on the selected category
   const filteredPackages =
@@ -54,9 +57,11 @@ const AllPackages = () => {
       {/* Page Title */}
       <div className="w-full flex justify-between items-center">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold opacity-95">All Public Packages</h1>
+          <h1 className="text-2xl font-bold opacity-95">
+            All Custom request Packages
+          </h1>
           <p className="font-medium opacity-90">
-            Explore all the packages we offer
+            View All the Custom Request Packages
           </p>
         </div>
         <div>
@@ -114,20 +119,6 @@ const AllPackages = () => {
                   </ul>
                 </div>
               </CardContent>
-              <CardFooter className="flex justify-center">
-                {/* Admin View Details or Buy Now */}
-                {user?.role === "admin" ? (
-                  <Link to={`/package/single/${pkg._id}`}>
-                    <Button className="bg-blue-500 hover:bg-blue-600">
-                      View Details
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button className="bg-blue-500 hover:bg-blue-600">
-                    Buy Now
-                  </Button>
-                )}
-              </CardFooter>
             </Card>
           ))
         ) : (
@@ -140,4 +131,4 @@ const AllPackages = () => {
   );
 };
 
-export default AllPackages;
+export default ClientAllCustomPackageRequest;

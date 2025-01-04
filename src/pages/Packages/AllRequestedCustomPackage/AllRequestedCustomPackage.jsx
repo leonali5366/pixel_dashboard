@@ -1,3 +1,8 @@
+/* eslint-disable no-unused-vars */
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { CircleMinus, CirclePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,13 +12,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { AuthContext } from "@/Context/UserContext";
+import { Textarea } from "@/components/ui/textarea";
 import useRefresh from "@/hooks/useRefresh";
-import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-
-const AllPackages = () => {
+import { AuthContext } from "@/Context/UserContext";
+const AllRequestedCustomPackage = () => {
   const [packages, setPackages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -24,7 +28,9 @@ const AllPackages = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/package`);
+        const response = await fetch(
+          `http://localhost:5000/api/v1/package/custom/approved`
+        );
         const data = await response.json();
         if (data.status === "success" && data.data) {
           setPackages(data.data);
@@ -48,13 +54,12 @@ const AllPackages = () => {
     selectedCategory === "all"
       ? packages
       : packages.filter((pkg) => pkg.category === selectedCategory);
-
   return (
     <div className="h-full p-5 space-y-10">
       {/* Page Title */}
       <div className="w-full flex justify-between items-center">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold opacity-95">All Public Packages</h1>
+          <h1 className="text-2xl font-bold opacity-95">All Custom Packages</h1>
           <p className="font-medium opacity-90">
             Explore all the packages we offer
           </p>
@@ -140,4 +145,4 @@ const AllPackages = () => {
   );
 };
 
-export default AllPackages;
+export default AllRequestedCustomPackage;

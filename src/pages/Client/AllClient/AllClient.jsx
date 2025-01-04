@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AllClient = () => {
   const [clients, setClients] = useState([]);
-
+  const navigate = useNavigate();
   // Fetch all clients
   useEffect(() => {
     fetch("http://localhost:5000/api/v1/client/all")
@@ -39,8 +40,9 @@ const AllClient = () => {
             <tbody>
               {clients.map((client) => (
                 <tr
+                onClick={()=>{navigate(`/client/single/${client?.email}`)}}
                   key={client._id}
-                  className="hover:bg-gray-50 transition-colors duration-200"
+                  className="hover:bg-gray-200 transition-colors duration-200 cursor-pointer"
                 >
                   {/* Photo */}
                   <td className="border p-3">

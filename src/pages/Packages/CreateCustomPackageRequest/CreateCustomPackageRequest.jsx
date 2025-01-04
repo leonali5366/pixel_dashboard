@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { CircleMinus, CirclePlus } from "lucide-react";
@@ -15,14 +15,17 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import useRefresh from "@/hooks/useRefresh";
+import { AuthContext } from "@/Context/UserContext";
 
-const AddANewPackage = () => {
+const CreateCustomPackageRequest = () => {
+  const { user } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     plans: [{ plan: "" }],
     price: "",
     category: "",
+    email: user?.email,
   });
   const { packageRefresh, setPackageRefresh } = useRefresh();
   const navigate = useNavigate();
@@ -68,16 +71,19 @@ const AddANewPackage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/v1/package`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/v1/package/custom`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
-        toast.success("Package created successfully");
+        toast.success("Custom package request successfully");
         setPackageRefresh(packageRefresh + 1);
-        navigate("/package/public/all");
+
         // Reset form fields
         setFormData({
           name: "",
@@ -86,8 +92,13 @@ const AddANewPackage = () => {
           price: "",
           category: "",
         });
+        if (user?.role === "client") {
+          navigate("/package/myRequests");
+        } else {
+          navigate("/package/public/all");
+        }
       } else {
-        toast.error(data.message || "Failed to create package");
+        toast.error(data.message || "Failed to request package");
       }
     } catch (error) {
       console.error(error);
@@ -100,9 +111,11 @@ const AddANewPackage = () => {
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Add a New Package</CardTitle>
+            <CardTitle className="text-xl">
+              Create a custom package request
+            </CardTitle>
             <CardDescription>
-              Here add new package and plans for packages
+              Here add a custom package request and plans for packages
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -210,4 +223,4 @@ const AddANewPackage = () => {
   );
 };
 
-export default AddANewPackage;
+export default CreateCustomPackageRequest;

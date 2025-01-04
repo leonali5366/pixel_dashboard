@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import useOrders from "@/hooks/useOrders";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,11 +41,11 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useOrders from "@/hooks/useOrders";
 
-const Ppc = () => {
+const Mern = () => {
+  const { orders, mernOrders } = useOrders();
   const navigate = useNavigate();
-  const {ppcOrders} = useOrders();
+
   const [stats, setStats] = useState({
     totalOrders: 0,
     ongoingOrders: 0,
@@ -53,45 +56,46 @@ const Ppc = () => {
   });
 
   useEffect(() => {
-    calculateStats(ppcOrders);
-  }, [ppcOrders]);
+    calculateStats(mernOrders);
+  }, [mernOrders]);
 
   // Calculate statistics dynamically
-  const calculateStats = (ordersData) => {
-    const totalOrders = ordersData.length;
-  
-    // Define ongoing statuses
-    const ongoingStatuses = ["assigned", "in progress", "delivered", "on review"];
-  
-    const ongoingOrders = ordersData.filter((order) =>
-      ongoingStatuses.includes(order.status)
-    ).length;
-  
-    const completedOrders = ordersData.filter(
-      (order) => order.status === "Completed"
-    ).length;
-  
-    const canceledOrders = ordersData.filter(
-      (order) => order.status === "Canceled"
-    ).length;
-  
-    const revenue = ordersData
-      .filter((order) => order.status === "Completed")
-      .reduce((sum, order) => sum + order.moneyPaid, 0);
-  
-    const ongoingRevenue = ordersData
-      .filter((order) => ongoingStatuses.includes(order.status))
-      .reduce((sum, order) => sum + order.budget, 0);
-  
-    setStats({
-      totalOrders,
-      ongoingOrders,
-      completedOrders,
-      canceledOrders,
-      revenue,
-      ongoingRevenue,
-    });
-  };
+const calculateStats = (ordersData) => {
+  const totalOrders = ordersData.length;
+
+  // Define ongoing statuses
+  const ongoingStatuses = ["assigned", "in progress", "delivered", "on review"];
+
+  const ongoingOrders = ordersData.filter((order) =>
+    ongoingStatuses.includes(order.status)
+  ).length;
+
+  const completedOrders = ordersData.filter(
+    (order) => order.status === "Completed"
+  ).length;
+
+  const canceledOrders = ordersData.filter(
+    (order) => order.status === "Canceled"
+  ).length;
+
+  const revenue = ordersData
+    .filter((order) => order.status === "Completed")
+    .reduce((sum, order) => sum + order.moneyPaid, 0);
+
+  const ongoingRevenue = ordersData
+    .filter((order) => ongoingStatuses.includes(order.status))
+    .reduce((sum, order) => sum + order.budget, 0);
+
+  setStats({
+    totalOrders,
+    ongoingOrders,
+    completedOrders,
+    canceledOrders,
+    revenue,
+    ongoingRevenue,
+  });
+};
+
 
   const columns = [
     {
@@ -130,9 +134,9 @@ const Ppc = () => {
 
   // React Table initialization
   const table = useReactTable({
-    data: ppcOrders,
+    data: mernOrders,
     columns,
-    pageCount: Math.ceil(ppcOrders.length / 5),
+    pageCount: Math.ceil(mernOrders.length / 5),
     initialState: {
       pagination: {
         pageSize: 5,
@@ -144,13 +148,11 @@ const Ppc = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-
   return (
     <div className="p-6 space-y-6">
       {/* Page Title */}
-      <h1 className="text-2xl font-bold text-gray-800">PPC Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-800">MERN Dashboard</h1>
 
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="flex flex-col gap-3">
@@ -218,8 +220,6 @@ const Ppc = () => {
           </CardContent>
         </Card>
       </div>
-
-      
 
       <Card>
         <CardHeader>
@@ -318,12 +318,10 @@ const Ppc = () => {
               </TableBody>
             </Table>
           </div>
-
-          
         </CardContent>
       </Card>
     </div>
   );
 };
 
-export default Ppc;
+export default Mern;

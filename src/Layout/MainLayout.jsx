@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import AppSidebar from "@/components/AppSidebar";
+import AppSidebar from "@/components/pac";
 import { BreadcrumbM } from "@/components/Header/Breadcrumb";
 import Header from "@/components/Header/Header";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";

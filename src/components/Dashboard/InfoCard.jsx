@@ -5,6 +5,7 @@ import { FaSackDollar } from "react-icons/fa6";
 import { Area, AreaChart } from "recharts";
 import { ChartContainer } from "../ui/chart";
 import { useEffect, useState } from "react";
+import useOrders from "@/hooks/useOrders";
 
 const data = [
   {
@@ -56,44 +57,7 @@ const chartConfig = {
 };
 
 export default function InfoCard() {
-  const [users, setUsers] = useState([]);
-  const [activeOrders, setActiveOrders] = useState([]);
-  const [totalSales, setTotalSales] = useState(0); // Sales amount
-  const [totalProfit, setTotalProfit] = useState(0); // Profit amount
-
-  // Fetch users
-  useEffect(() => {
-    fetch("http://localhost:5000/api/v1/client/all")
-      .then((response) => response.json())
-      .then((data) => {
-        setUsers(data.clients || []);
-      });
-  }, []); // Empty dependency array, so it runs only once.
-
-  // Fetch Active Orders and calculate ongoing sales and profit
-  useEffect(() => {
-    fetch("http://localhost:5000/api/v1/order/get/all")
-      .then((response) => response.json())
-      .then((data) => {
-        const orders = data.data || [];
-        setActiveOrders(orders);
-
-        // Calculate Total Ongoing Sales (not finished orders)
-        const ongoingSales = orders
-          .filter((order) => order.status !== "finished")
-          .reduce((acc, order) => acc + (order.budget || 0), 0); // Sum of budget for ongoing orders
-        setTotalSales(ongoingSales);
-
-        // Calculate Total Profit (finished orders)
-        const completedOrders = orders
-          .filter((order) => order.status === "finished")
-          .reduce((acc, order) => acc + (order.budget || 0), 0); // Sum of budget for finished orders
-        setTotalProfit(completedOrders);
-      })
-      .catch((error) => {
-        console.error("Error fetching orders:", error);
-      });
-  }, []); // Runs only once when the component is mounted.
+  const {newOrders, activeOrders, totalSales, activeSales} = useOrders();
 
   return (
     <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5 w-full h-fit">
@@ -105,8 +69,8 @@ export default function InfoCard() {
               <FaUserCheck size={24} className="ml-2" />
             </div>
             <div className="flex flex-col gap-y-1">
-              <p className="text-sm font-medium text-[#4B5563]">Total Users</p>
-              <h6 className="text-2xl font-semibold">{users?.length}</h6>
+              <p className="text-sm font-medium text-[#4B5563]">New order</p>
+              <h6 className="text-2xl font-semibold">{newOrders?.length}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
@@ -204,7 +168,7 @@ export default function InfoCard() {
               <p className="text-sm font-medium text-[#4B5563]">
                 Ongoing Sales
               </p>
-              <h6 className="text-2xl font-semibold">${totalSales}</h6>
+              <h6 className="text-2xl font-semibold">${activeSales}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
@@ -253,8 +217,8 @@ export default function InfoCard() {
               <FaSackDollar size={22} />
             </div>
             <div className="flex flex-col gap-y-1">
-              <p className="text-sm font-medium text-[#4B5563]">Total Profit</p>
-              <h6 className="text-2xl font-semibold">${totalProfit}</h6>
+              <p className="text-sm font-medium text-[#4B5563]">Total Sales</p>
+              <h6 className="text-2xl font-semibold">${totalSales?.total}</h6>
             </div>
           </div>
           <div className="max-w-[7rem] max-h-[4rem] overflow-hidden">
